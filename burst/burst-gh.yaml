@@ -1,0 +1,112 @@
+# (C) Copyright 2022-2023 Hewlett Packard Enterprise Development LP
+---
+### XXX gh-compute XXX ###
+schema_version: 1.0.2
+configurations:
+- name: "tmp-{{vcluster.name}}-gh-{{default.suffix}}-{{vcluster.version}}"
+  layers:
+  # Execute dummy layer for uss to supply ansible to move_cfs_layers_into_systemd-site-prealps.
+  - name: dummy-{{uss.working_branch}}
+    playbook: mclis-0.yml
+    git:
+      url: https://api-gw-service-nmn.local/vcs/cray/uss-config-management.git
+      # branch: "{{uss.working_branch}}"
+      commit: "{{uss.working_commit}}"
+    special_parameters:
+      ims_require_dkms: true
+  - name: sma-ldms-compute-{{sma.version}}
+    playbook: sma-ldms-compute.yml
+    git:
+      url: https://api-gw-service-nmn.local/vcs/cray/sma-config-management.git
+      commit: "{{sma.working_commit}}"
+  # Execute dummy layer for cpe to supply ansible to move_cfs_layers_into_systemd-site-prealps.
+  - name: dummy-{{cpe.working_branch}}
+    playbook: mclis-0.yml
+    git:
+      url: https://api-gw-service-nmn.local/vcs/cray/cpe-config-management.git
+      # branch: "{{cpe.working_branch}}"
+      commit: "{{cpe.working_commit}}"
+  - name: cscs
+    playbook: site.yml
+    git:
+      url: https://api-gw-service-nmn.local/vcs/cray/cscs-config-management.git
+      # branch: "{{default.working_branch}}"
+      commit: "{{cscs.working_commit}}"
+  - name: cscs
+    playbook: move_cfs_layers_into_systemd-site-psi.yml
+    git:
+      url: https://api-gw-service-nmn.local/vcs/cray/cscs-config-management.git
+      # branch: "{{default.working_branch}}"
+      commit: "{{cscs.working_commit}}"
+  - name: psi
+    playbook: cfs-layer-psi/layer0.yml
+    git:
+      url:  https://api.cmn.alps.cscs.ch/vcs/crayvcs/vcluster-psidev-ansible.git
+        #branch: "{{psi.working_branch}}"
+      commit: "{{psi.working_commit}}"
+
+- name: "{{vcluster.name}}-gh-{{default.suffix}}-{{vcluster.version}}"
+  layers:
+  - name: cscs
+    playbook: move_cfs_layers_into_systemd-site-psi.yml
+    git:
+      url: https://api-gw-service-nmn.local/vcs/cray/cscs-config-management.git
+      # branch: "{{default.working_branch}}"
+      commit: "{{cscs.working_commit}}"
+  - name: cos-compute-{{uss.working_branch}}
+    playbook: cos-compute-mclis-2.yml
+    git:
+      url: https://api-gw-service-nmn.local/vcs/cray/uss-config-management.git
+      # branch: "{{uss.working_branch}}"
+      commit: "{{uss.working_commit}}"
+    special_parameters:
+      ims_require_dkms: true
+  - name: cscs
+    playbook: site-mclis-2.yml
+    git:
+      url: https://api-gw-service-nmn.local/vcs/cray/cscs-config-management.git
+      # branch: "{{default.working_branch}}"
+      commit: "{{cscs.working_commit}}"
+  # The following layer applies cgroup workaround for slurm.
+  - name: cscs
+    playbook: cgroup-workaround-psi.yml
+    git:
+      url: https://api-gw-service-nmn.local/vcs/cray/cscs-config-management.git
+      # branch: "{{default.working_branch}}"
+      commit: "{{cscs.working_commit}}"
+  - name: psi
+    playbook: cfs-layer-psi/layer0.yml
+    git:
+      url:  https://api.cmn.alps.cscs.ch/vcs/crayvcs/vcluster-psidev-ansible.git
+        #branch: "{{psi.working_branch}}"
+      commit: "{{psi.working_commit}}"
+
+images:
+- name: "{{vcluster.name}}-gh-{{default.suffix}}-{{vcluster.version}}"
+  ims:
+    is_recipe: false
+    id: c546be86-816d-44b9-a03c-c29f10765c9d
+  configuration: "tmp-{{vcluster.name}}-gh-{{default.suffix}}-{{vcluster.version}}"
+  configuration_group_names:
+  - Compute
+  - alps
+  - burst
+
+session_templates:
+- name: "{{vcluster.name}}-gh-{{default.suffix}}-{{vcluster.version}}.aarch64"
+  image:
+    ims:
+      name: "{{vcluster.name}}-gh-{{default.suffix}}-{{vcluster.version}}"
+  configuration: "{{vcluster.name}}-gh-{{default.suffix}}-{{vcluster.version}}"
+  bos_parameters:
+    boot_sets:
+      compute:
+        arch: ARM
+        kernel_parameters: ip=dhcp quiet ksocklnd.skip_mr_route_setup=1 cxi_ss1.disable_default_svc=0 cxi_ss1.enable_fgfc=1 cxi_ss1.sct_pid_mask=0xf spire_join_token=${SPIRE_JOIN_TOKEN} modprobe.blacklist=ipmi_ssif lnet.lnet_peer_discovery_disabled=1
+        node_groups:
+        - burst_gh
+        rootfs_provider: "sbps"
+        # Use the next line to copy the root filesystem to ram
+        rootfs_provider_passthrough: "sbps:v1:iqn.2023-06.csm.iscsi:_sbps-nmn._tcp.{{default.system_name}}.{{default.site_domain}}:300:true"
+        # Use the next line to project the root filesystem
+        # rootfs_provider_passthrough: "sbps:v1:iqn.2023-06.csm.iscsi:_sbps-nmn._tcp.{{default.system_name}}.{{default.site_domain}}:300"

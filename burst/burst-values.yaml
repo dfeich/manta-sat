@@ -1,0 +1,53 @@
+---
+
+vcluster:
+  name: "burst"
+  version: "5.0b"
+
+default:
+  network_type: "cassini"
+  suffix: "25.6.0.r1"
+  working_branch: "cscs-25.6.0"
+  #note: ""
+  #wlm: "future use"
+  system_name: "alps"
+  site_domain: "cscs.ch"
+
+psi:
+  working_branch: "development"
+  working_commit: "930ba8c9daa4b813817933aec666475d259191bc"
+
+uss:
+  version: 1.3.1-0-csm
+  working_branch: "cscs-25.6.0"
+  working_commit: "5a00750b0faf7494ed306389035f12962a24a7bf"
+
+cpe:
+  version: 25.3.3
+  working_branch: "cscs-25.6.0"
+  working_commit: "59081db90168c09670ac5878eae4d527a5dbd8d6"
+
+sma:
+  version: 1.10.15
+  working_commit: "aead96224dd4d8b0af969fee9cdc36d8c6a8f543"
+
+cscs:
+  working_commit: "36c2a75db923e86d9ef8d1e31cc975eb23d0dd3a"
+
+# The following products has been used to build the base image
+# image base-mc-compute-cscs-25.6.0.r1 (id: 448236ec-2502-4ebc-92b5-3fb277f2b871)
+# image base-gpu-compute-cscs-25.6.0.r1 (id: a7f1df86-acc9-447c-b497-9abce7e18b53)
+# image base-gh-compute-cscs-25.6.0.r1 (id: cd95bbae-1e91-4db2-97ac-f5f68d5fdeb5)
+#csm:
+#  version: 1.6.2
+#  working_commit: "0a4a5ee250eaf909510df224ef3785118fa7fb97"
+#
+#csm_diags:
+#  version: 1.6.14
+#  working_commit: "c0b8833d96880db9d6554aaa5122caaa9b75d69c"
+#
+#slingshot_host_software:
+#  version_x86_64: 12.0.2-68-cos-3.3-x86-64
+#  version_aarch64: 12.0.2-68-cos-3.3-aarch64
+#  working_branch: "cscs-25.6.0-shs12.0.2"
+#  working_commit: "5ec3ca26b5dc773199f36a8ecf937a93fe0d572e"
