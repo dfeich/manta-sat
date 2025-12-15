@@ -26,6 +26,12 @@ configurations:
       url: https://api-gw-service-nmn.local/vcs/cray/cpe-config-management.git
       # branch: "{{cpe.working_branch}}"
       commit: "{{cpe.working_commit}}"
+  - name: cscs-cleanup-dangling-iscsi
+    playbook: cscs-cleanup-dangling-iscsi.yml
+    git:
+      url: https://api-gw-service-nmn.local/vcs/cray/uss-config-management.git
+      # branch: "{{uss.working_branch}}"
+      commit: "{{uss.working_commit}}"
   - name: cscs
     playbook: site.yml
     git:
@@ -41,9 +47,9 @@ configurations:
   - name: psi
     playbook: cfs-layer-psi/layer0.yml
     git:
-      url:  https://api.cmn.alps.cscs.ch/vcs/crayvcs/vcluster-psidev-ansible.git
-      # branch: "{{psi.working_branch}}"
-      commit: "{{psi.working_commit}}"
+      url:  https://api-gw-service-nmn.local/vcs/cray/vcluster-psidev-ansible.git
+      branch: "{{psi.working_branch}}"
+      #commit: "{{psi.working_commit}}"
 
 - name: "{{vcluster.name}}-gh-{{default.suffix}}-{{vcluster.version}}"
   layers:
@@ -61,6 +67,12 @@ configurations:
       commit: "{{uss.working_commit}}"
     special_parameters:
       ims_require_dkms: true
+  - name: cscs-cleanup-dangling-iscsi
+    playbook: cscs-cleanup-dangling-iscsi.yml
+    git:
+      url: https://api-gw-service-nmn.local/vcs/cray/uss-config-management.git
+      # branch: "{{uss.working_branch}}"
+      commit: "{{uss.working_commit}}"
   - name: cscs
     playbook: site-mclis-2.yml
     git:
@@ -77,16 +89,16 @@ configurations:
   - name: psi
     playbook: cfs-layer-psi/layer0.yml
     git:
-      url:  https://api.cmn.alps.cscs.ch/vcs/crayvcs/vcluster-psidev-ansible.git
-      # branch: "{{psi.working_branch}}"
-      commit: "{{psi.working_commit}}"
+      url:  https://api-gw-service-nmn.local/vcs/cray/vcluster-psidev-ansible.git
+      branch: "{{psi.working_branch}}"
+      #commit: "{{psi.working_commit}}"
 
 images:
 - name: "{{vcluster.name}}-gh-{{default.suffix}}-{{vcluster.version}}"
   ims:
     is_recipe: false
-    # base-gh-compute-cscs-25.6.0.r2
-    id: c546be86-816d-44b9-a03c-c29f10765c9d
+    # base-gh-compute-cscs-25.6.0.r3
+    id: a6da686d-6abb-461b-abf0-33c09b28c2b2
   configuration: "tmp-{{vcluster.name}}-gh-{{default.suffix}}-{{vcluster.version}}"
   configuration_group_names:
   - Compute
